@@ -1,5 +1,6 @@
 import msrcpsp.evaluation.BaseEvaluator;
 import msrcpsp.evaluation.DurationEvaluator;
+import msrcpsp.ga.RunnerGA;
 import msrcpsp.io.MSRCPSPIO;
 import msrcpsp.scheduling.Resource;
 import msrcpsp.scheduling.Schedule;
@@ -37,21 +38,17 @@ public class Runner {
     int[] upperBounds = schedule.getUpperBounds(schedule.getTasks().length);
     // create an evaluator
     BaseEvaluator evaluator = new DurationEvaluator(schedule);
-
+    
+    
     Task[] tasks = schedule.getTasks();
     Resource[] resources = schedule.getResources();
-
+    
+    schedule = RunnerGA.run(schedule, 50, 0.1, 0.1, 100,5);
+    
+    
+    
     // create arbitrary schedule
-    schedule.assign(tasks[0], resources[0]);
-    schedule.assign(tasks[1], resources[1]);
-    schedule.assign(tasks[2], resources[2]);
-    schedule.assign(tasks[3], resources[0]);
-    schedule.assign(tasks[4], resources[1]);
-    schedule.assign(tasks[5], resources[2]);
-    schedule.assign(tasks[6], resources[0]);
-    schedule.assign(tasks[7], resources[1]);
-    schedule.assign(tasks[8], resources[2]);
-    schedule.assign(tasks[9], resources[0]);
+    
 
     // create greedy algorithm to set timestamps
     Greedy greedy = new Greedy(schedule.getSuccesors());

@@ -9,16 +9,23 @@ public class Population {
 	
 	
 	
-	public Population(int pop_size, int genesSize) {
-		super();
+	public Population(int pop_size) {
 		this.population = new Individual[pop_size];
 		this.pop_size = pop_size;
 		for(int i = 0; i < pop_size; i++)
-			this.population[i]= new Individual(genesSize);
+			this.population[i]= new Individual();
 		
+		orderPopulation();
 		setStatistics();
 	}
-	
+	//cria uma população com indivíduos sem valor, será composto posteriormente
+    public Population(int pop_size, boolean t ) {
+        this.pop_size = pop_size;
+        this.population = new Individual[pop_size];
+        for (int i = 0; i < this.population.length; i++) {
+            this.population[i] = null;
+        }
+    }
 	
 	private void setStatistics(){
 		for(int i = 0; i < this.pop_size; i++){
@@ -34,6 +41,55 @@ public class Population {
 		
 		this.avarege /=this.pop_size;
 	}
+	
+	public void orderPopulation(){
+		boolean chenged =true;
+		while(chenged){
+			chenged=false;
+		for( int i = 0; i < this.pop_size-1; i++){
+			Individual temp = null;
+			if(this.population[i].getDuration() > this.population[i+1].getDuration()){
+				temp = this.population[i];
+				this.population[i] = this.population[i+1];
+				this.population[i+1]= temp;
+				chenged=true;
+				
+			}
+		}
+		}
+		
+	}
+	//coloca um indivíduo em uma certa posição da população
+    public void setIndividual(Individual individual, int position) {
+        this.population[position] = individual;
+    }
+
+    //coloca um indivíduo na próxima posição disponível da população
+    public void setIndividual(Individual individual) {
+        for (int i = 0; i < this.population.length; i++) {
+            if (this.population[i] == null) {
+                this.population[i] = individual;
+                return;
+            }
+        }
+    }
+    
+  //número de indivíduos existentes na população
+    public int getNumIndividuals() {
+        int num = 0;
+        for (int i = 0; i < this.population.length; i++) {
+            if (this.population[i] != null) {
+                num++;
+            }
+        }
+        return num;
+    }
+
+
+
+    public Individual getIndivdual(int position) {
+        return this.population[position];
+    }
 
 	public int getPop_size() {
 		return pop_size;
