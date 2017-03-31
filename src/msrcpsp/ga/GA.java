@@ -21,7 +21,7 @@ public class GA {
 
         //se tiver elitismo, mantém o melhor indivíduo da geração atual
         if (elitismo) {
-            newPopulation.setIndividual(population.getIndivdual(0));
+            newPopulation.setIndividual(population.getIndividual(0));
         }
 
         //insere novos indivíduos na nova população, até atingir o tamanho máximo
@@ -33,25 +33,31 @@ public class GA {
             Individual[] sons = new Individual[2];
 
             //verifica a taxa de crossover, se sim realiza o crossover, se não, mantém os pais selecionados para a próxima geração
-            if (r.nextDouble() <= crossoverRate) {
+            
+            if ( r.nextDouble()<= crossoverRate) {
+            	
                 sons = crossover(parent[1], parent[0]);
                 if(r.nextDouble() <= mutationRate){
                 	sons[0]=doMutation(sons[0]);
                 	sons[1]=doMutation(sons[1]);
                 }
+              //adiciona os filhos na nova geração
+                newPopulation.setIndividual(sons[0]);
+                newPopulation.setIndividual(sons[1]);
+                
             } else {
-                sons[0] = new Individual(parent[0].getTask(),parent[0].getResource());
-                sons[1] = new Individual(parent[1].getTask(),parent[1].getResource());
+                sons[0] = new Individual(parent[0].getGenes());
+                //sons[1] = new Individual(parent[1].getGenes());
                 if(r.nextDouble() <= mutationRate){
                 	sons[0]=doMutation(sons[0]);
-                	sons[1]=doMutation(sons[1]);
+                	//sons[1]=doMutation(sons[1]);
                 }
+              //adiciona o filho na nova geração
+                newPopulation.setIndividual(sons[0]);
             }
             
             
-            //adiciona os filhos na nova geração
-            newPopulation.setIndividual(sons[0]);
-            newPopulation.setIndividual(sons[1]);
+            
         }
 
         //ordena a nova população
@@ -63,14 +69,14 @@ public class GA {
         Random r = new Random();
 
         //sorteia o ponto de corte
-        int pointOfCut1 = r.nextInt((individual1.getGenes().getResources().length/2) -2) + 1;
-       // int pointOfCut2 = r.nextInt((individual1.getGenes().getResources().length/2) -2) + individual1.getGenes().getResources().length/2;
+        int pointOfCut1 = r.nextInt((individual1.getResource().length/2)-2) + 1;
+       int pointOfCut2 = r.nextInt((individual1.getResource().length/2)-2) + individual1.getResource().length/2;
 
         Individual[] sons = new Individual[2];
         Task[] tasks = individual1.getTask();
         //pega os genes dos pais
-        Resource[] geneParent1 = individual1.getGenes().getResources();
-        Resource[] geneParent2 = individual2.getGenes().getResources();
+        Resource[] geneParent1 = individual1.getResource();
+        Resource[] geneParent2 = individual2.getResource();
 
         Resource[] geneSon1 = new Resource[geneParent1.length];
         Resource[] geneSon2 =new Resource[geneParent2.length];
@@ -80,16 +86,22 @@ public class GA {
         	geneSon1[i] = geneParent1[i];
   
         
-        for(int i= pointOfCut1;i < geneParent1.length;i++)
+        for(int i= pointOfCut1;i < pointOfCut2;i++)
         	geneSon1[i] = geneParent2[i];
+        
+        for(int i= pointOfCut2;i < geneParent1.length;i++)
+        	geneSon1[i] = geneParent1[i];
+        
         
         for(int i= 0;i < pointOfCut1;i++)
         	geneSon2[i] = geneParent2[i];
   
         
-        for(int i= pointOfCut1;i < geneParent2.length;i++)
+        for(int i= pointOfCut1;i < pointOfCut2;i++)
         	geneSon2[i] = geneParent1[i];
         
+        for(int i= pointOfCut2;i < geneParent2.length;i++)
+        	geneSon2[i] = geneParent2[i];
        
 
         //cria o novo indivíduo com os genes dos pais
@@ -117,11 +129,11 @@ public class GA {
 
     public static Individual[] selectTorneio(Population populacao,int n) {
         Random r = new Random();
-        Population IntermidiaPopulation = new Population(n,true);
+        Population IntermidiaPopulation = new Population(n);
 
         //seleciona 3 indivíduos aleatóriamente na população
         for(int i = 0 ; i < n;i++)
-        IntermidiaPopulation.setIndividual(populacao.getIndivdual(r.nextInt(populacao.getPop_size())));
+        IntermidiaPopulation.setIndividual(populacao.getIndividual(r.nextInt(populacao.getPop_size())));
         
 
         //ordena a população
@@ -130,8 +142,8 @@ public class GA {
         Individual[] parent = new Individual[2];
 
         //seleciona os 2 melhores deste população
-        parent[0] = IntermidiaPopulation.getIndivdual(0);
-        parent[1] = IntermidiaPopulation.getIndivdual(1);
+        parent[0] = IntermidiaPopulation.getIndividual(0);
+        parent[1] = IntermidiaPopulation.getIndividual(1);
 
         return parent;
     }

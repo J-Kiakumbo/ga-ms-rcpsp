@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class Runner {
 
   private static final Logger LOGGER = Logger.getLogger( Runner.class.getName() );
-  private static final String definitionFile = "assets/def_small/10_3_5_3.def";
+  private static final String definitionFile = "assets/def_small/ga200.txt";
   private static final String writeFile = "assets/solutions_small/10_3_5_3.sol";
 
   public static void main(String[] args) {
@@ -43,7 +43,7 @@ public class Runner {
     Task[] tasks = schedule.getTasks();
     Resource[] resources = schedule.getResources();
     
-    schedule = RunnerGA.run(schedule, 50, 0.1, 0.1, 100,5);
+    schedule = RunnerGA.run(schedule, 100, 0.6, 0.1, 100,5);
     
     
     

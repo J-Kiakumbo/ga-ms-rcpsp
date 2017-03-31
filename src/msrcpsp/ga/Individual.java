@@ -18,36 +18,52 @@ public class Individual {
 	public Individual(){
 		Task[] tasks = GA.allTasks;
 		Resource[] resources = GA.allResources;
-		genes=new Schedule(tasks, resources);
+		Resource[] resourceT = new Resource[tasks.length];
+		Schedule genes=new Schedule(tasks, resources);
 		int[] upperBounds = genes.getUpperBounds(tasks.length);
 		  Random random = new Random(System.currentTimeMillis());
 		    List<Resource> capableResources;
 		    for (int i = 0; i < tasks.length; ++i) {
 		      capableResources = genes.getCapableResources(tasks[i]);
-		      genes.assign(tasks[i], capableResources.get((int)(random.nextDouble() * upperBounds[i])));
+		      resourceT[i]= capableResources.get((int)(random.nextDouble() * upperBounds[i]));
 		    }
-		Greedy greedy = new Greedy(genes.getSuccesors());
-		greedy.buildTimestamps(genes);
-		BaseEvaluator evaluator = new DurationEvaluator(genes);
+		    Schedule newGenes=new Schedule(tasks, resourceT);
+		    for (int i = 0; i < tasks.length; ++i) {
+			      
+			      newGenes.assign(tasks[i], resourceT[i]);
+			    }
+		Greedy greedy = new Greedy(newGenes.getSuccesors());
+		greedy.buildTimestamps(newGenes);
+		BaseEvaluator evaluator = new DurationEvaluator(newGenes);
 		
 		this.duration = evaluator.getDuration();
+		this.genes = newGenes;
 	}
 	
 	// Criar um individuo com os genes definidos
 	
 	public Individual(Task[] tasks, Resource[] resources){
 		Schedule genes = new Schedule(tasks,resources);
-		for (int i = 0; i < genes.getResources().length; i++){
+		for (int i = 0; i < resources.length; i++){
 			genes.assign(tasks[i], resources[i]);
 		}
-		this.genes = genes;
-		Greedy greedy = new Greedy(this.genes.getSuccesors());
-		greedy.buildTimestamps(this.genes);
-		BaseEvaluator evaluator = new DurationEvaluator(this.genes);
-		System.out.println("czas Optmalna: " +evaluator.getDurationNormalized() );
+		
+		Greedy greedy = new Greedy(genes.getSuccesors());
+		greedy.buildTimestamps(genes);
+		BaseEvaluator evaluator = new DurationEvaluator(genes);
+		//System.out.println("czas Optmalna: " +evaluator.getDurationNormalized() );
 		this.duration = evaluator.getDuration();
+		this.genes = genes;
 	}
 	
+	public Individual(Schedule genes){
+		Greedy greedy = new Greedy(genes.getSuccesors());
+		greedy.buildTimestamps(genes);
+		BaseEvaluator evaluator = new DurationEvaluator(genes);
+		//System.out.println("czas Optmalna: " +evaluator.getDurationNormalized() );
+		this.duration = evaluator.getDuration();
+		this.genes = genes;
+	}
 	public Task[] getTask(){
 		return this.genes.getTasks();
 	}
